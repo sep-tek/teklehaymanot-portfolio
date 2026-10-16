@@ -39,7 +39,7 @@ function ExposureSync({ exposure }) {
   return null
 }
 
-export default function SceneContent({ settings, theme, interactive, onDecline }) {
+export default function SceneContent({ settings, theme, interactive, pointerGain = 1, onDecline }) {
   const scene = theme.scene
   const sphereSegments = settings.sphereSegments
 
@@ -103,6 +103,7 @@ export default function SceneContent({ settings, theme, interactive, onDecline }
         segments={sphereSegments}
         textureSize={settings.textureSize}
         interactive={interactive}
+        gain={pointerGain}
         look={scene.sphere}
       />
 

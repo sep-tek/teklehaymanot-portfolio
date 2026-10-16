@@ -5,6 +5,7 @@
   line-height: 1.95;
 }
 
+/* Hover and focus-visible paired so keyboard users get the same shift. */
 .social-links__link {
   display: inline-flex;
   align-items: center;
@@ -14,7 +15,8 @@
   transition: color 220ms var(--ease-out), transform 260ms var(--ease-out);
 }
 
-.social-links__link:hover {
+.social-links__link:hover,
+.social-links__link:focus-visible {
   color: var(--c-ink);
   transform: translateX(3px);
 }
@@ -24,9 +26,11 @@
   color: currentColor;
   opacity: 0.55;
   flex: none;
-  transition: opacity 220ms var(--ease-out);
+  transition: opacity 220ms var(--ease-out), transform 260ms var(--ease-out);
 }
 
-.social-links__link:hover .social-links__icon {
+.social-links__link:hover .social-links__icon,
+.social-links__link:focus-visible .social-links__icon {
   opacity: 1;
+  transform: scale(1.12);
 }

@@ -1,3 +1,7 @@
+/* Editorial text link.
+   Hover and focus-visible intentionally share the same rules: a keyboard user
+   must get the same signal a pointer user does, not just an outline. */
+
 .arrow-link {
   display: inline-flex;
   align-items: center;
@@ -6,18 +10,24 @@
   text-decoration: none;
   border-bottom: 1px solid var(--c-line);
   padding-bottom: 0.28em;
-  transition: border-color 260ms var(--ease-out), color 260ms var(--ease-out);
+  transition:
+    border-color 260ms var(--ease-out),
+    color 260ms var(--ease-out),
+    gap 260ms var(--ease-out);
 }
 
-.arrow-link:hover {
+.arrow-link:hover,
+.arrow-link:focus-visible {
   color: var(--c-accent);
   border-color: var(--c-accent);
+  gap: 0.8em;
 }
 
 .arrow-link__icon {
   transition: transform 300ms var(--ease-out);
 }
 
-.arrow-link:hover .arrow-link__icon {
+.arrow-link:hover .arrow-link__icon,
+.arrow-link:focus-visible .arrow-link__icon {
   transform: translate(3px, -3px);
 }

@@ -10,7 +10,7 @@
  * and freezing the sphere's idle drift.
  */
 
-import { Suspense, useCallback, useMemo, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { ACESFilmicToneMapping } from 'three'
 import { useIsCompact, useSceneCapability } from '../../hooks/useSceneCapability'
@@ -19,12 +19,26 @@ import { useTheme } from '../../theme/themeContext'
 import SceneContent from './SceneContent'
 import SphereFallback from './SphereFallback'
 
-export default function SceneLayer({ compact = false } = {}) {
+export default function SceneLayer() {
   const capability = useSceneCapability()
   const reducedMotion = usePrefersReducedMotion()
   const isCompact = useIsCompact()
   const { theme } = useTheme()
   const [degraded, setDegraded] = useState(false)
+
+  // Touch and pen give a much coarser pointer signal than a mouse, so the
+  // response is damped rather than disabled — drag-to-turn still works on a
+  // phone instead of the sphere sitting inert.
+  const [coarsePointer, setCoarsePointer] = useState(false)
+
+  useEffect(() => {
+    if (!window.matchMedia) return
+    const query = window.matchMedia('(pointer: coarse)')
+    const onChange = () => setCoarsePointer(query.matches)
+    onChange()
+    query.addEventListener('change', onChange)
+    return () => query.removeEventListener('change', onChange)
+  }, [])
 
   const handleDecline = useCallback(() => {
     // React Three Fiber reports sustained frame drops here; drop to 1x pixels.
@@ -74,7 +88,8 @@ export default function SceneLayer({ compact = false } = {}) {
           <SceneContent
             settings={settings}
             theme={theme}
-            interactive={!reducedMotion && !compact}
+            interactive={!reducedMotion}
+            pointerGain={coarsePointer ? 0.5 : 1}
             onDecline={handleDecline}
           />
         </Suspense>

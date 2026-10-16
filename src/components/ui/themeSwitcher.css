@@ -21,12 +21,19 @@
   transition: color 220ms var(--ease-out);
 }
 
-.theme-switcher__trigger:hover {
+.theme-switcher__trigger:hover,
+.theme-switcher__trigger:focus-visible {
   color: var(--c-ink);
 }
 
 .theme-switcher__icon {
   opacity: 0.6;
+  transition: opacity 220ms var(--ease-out);
+}
+
+.theme-switcher__trigger:hover .theme-switcher__icon,
+.theme-switcher__trigger:focus-visible .theme-switcher__icon {
+  opacity: 1;
 }
 
 .theme-switcher__swatch {
@@ -37,7 +44,8 @@
   transition: transform 320ms var(--ease-out);
 }
 
-.theme-switcher__trigger:hover .theme-switcher__swatch {
+.theme-switcher__trigger:hover .theme-switcher__swatch,
+.theme-switcher__trigger:focus-visible .theme-switcher__swatch {
   transform: scale(1.18);
 }
 
@@ -77,8 +85,8 @@
   letter-spacing: 0.04em;
   cursor: pointer;
   transition:
-    color 180ms var(--ease-out),
-    background-color 180ms var(--ease-out);
+    color 220ms var(--ease-out),
+    background-color 220ms var(--ease-out);
 }
 
 .theme-switcher__option:hover,
@@ -97,6 +105,12 @@
   height: 13px;
   border-radius: 50%;
   flex: none;
+  transition: transform 260ms var(--ease-out);
+}
+
+.theme-switcher__option:hover .theme-switcher__option-swatch,
+.theme-switcher__option:focus-visible .theme-switcher__option-swatch {
+  transform: scale(1.15);
 }
 
 .theme-switcher__option-label {

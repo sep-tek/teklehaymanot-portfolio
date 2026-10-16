@@ -1,7 +1,7 @@
 /* ==========================================================================
    Hero — full-viewport cinematic stage.
-   The overlay is a three-row grid: masthead (clears the fixed header),
-   the editorial middle band, and the pinned footer chrome.
+   The overlay is a four-row grid: masthead (clears the header), the name,
+   the tagline/bio band, and the footer chrome.
    ========================================================================== */
 
 .hero {
@@ -46,55 +46,82 @@
 }
 
 .hero__masthead {
-  height: clamp(5.5rem, 13vh, 9rem);
+  height: clamp(4.5rem, 10vh, 7rem);
 }
 
-/* --- Editorial middle band --------------------------------------------- */
+/* --- Identity lockup ----------------------------------------------------
+   One scale for the whole block.
 
-/* Asymmetric on purpose. Column 1 holds the headline and is deliberately
-   narrower than the sphere's footprint, column 2 is empty (the canvas shows
-   through), column 3 carries a comfortably wide biography.
+   Sizing rationale: at Archivo 800 uppercase, "TEKLEHAYMANOT" (13 glyphs)
+   renders at roughly 8.45em. The column below is ~30% of the content width,
+   so the type is capped at 3.4vw, which leaves the longest line ending around
+   the 28% mark — clear of the sphere, which spans ~36–64%.
 
-   Headline sizing note: "DEVELOPER." is ten glyphs, so at a bold grotesque
-   its rendered width is roughly 6.5em. Capping it near 4.6vw keeps the line
-   ending around the 25% mark, clear of the sphere, which spans ~36–64%. */
+   `--hero-identity-size` is shared by the name and the tagline so they are
+   set at an identical size by construction rather than by eye. `nowrap`
+   guarantees neither line can break mid-word. */
+
 .hero__grid {
   display: grid;
-  grid-template-columns: 24fr 42fr 34fr;
+  /* Asymmetric on purpose: column 1 holds the identity lockup and is
+     deliberately narrower than the sphere's footprint, column 2 is empty (the
+     canvas shows through), column 3 carries the biography. */
+  grid-template-columns: 32fr 40fr 28fr;
   align-items: center;
   column-gap: var(--space-5);
 }
 
-.hero__headline {
+.hero__identity {
   grid-column: 1;
-  margin: 0;
+  --hero-identity-size: clamp(2rem, 3.4vw, 4rem);
   display: flex;
   flex-direction: column;
-  font-weight: 400;
-  line-height: 0.88;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.hero__name {
+  margin: 0 0 0.22em;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: var(--hero-identity-size);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
   color: var(--c-ink);
 }
 
-/* High-contrast didone italic. Reduced less than the block below so the
-   editorial contrast between the two lines survives. */
-.hero__headline-script {
+.hero__name > span {
+  display: block;
+}
+
+.hero__tagline {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--c-ink);
+}
+
+.hero__tagline-script {
   font-family: var(--f-script);
   font-style: italic;
   font-weight: 500;
-  font-size: clamp(2.4rem, 5.2vw, 5.4rem);
+  font-size: var(--hero-identity-size);
   letter-spacing: -0.012em;
-  /* Optical overhang so the swash C clears the gutter. */
-  margin-left: -0.05em;
-  margin-bottom: 0.08em;
+  /* Optical overhang so the swash C aligns with the name's cap edge. */
+  margin-left: -0.04em;
+  margin-bottom: 0.06em;
   white-space: nowrap;
 }
 
-/* Heavy grotesque, tight tracking. Reduced hardest — this is the line that
-   was crossing the sphere. */
-.hero__headline-block {
+.hero__tagline-block {
   font-family: var(--f-display);
   font-weight: 800;
-  font-size: clamp(2.5rem, 4.6vw, 5rem);
+  font-size: var(--hero-identity-size);
   letter-spacing: -0.03em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -133,9 +160,10 @@
   font-size: 0.88em;
 }
 
-/* --- Pinned footer chrome ------------------------------------------------ */
+/* --- Footer chrome ------------------------------------------------------- */
 
 .hero__footer {
+  grid-row: 4;
   display: grid;
   grid-template-columns: 1fr 1.9fr 1fr 0.95fr;
   align-items: end;
@@ -165,23 +193,25 @@
 }
 
 /* --- Responsive ----------------------------------------------------------
-   Tablet stacks headline and bio full width rather than squeezing the bio
+   Tablet stacks the tagline and bio full width rather than squeezing the bio
    into half a row — at 768px a split leaves it an unreadable narrow column. */
 
 @media (max-width: 1080px) {
   .hero__grid {
     grid-template-columns: 1fr;
-    row-gap: var(--space-7);
+    row-gap: var(--space-6);
   }
 
-  .hero__headline {
+  .hero__identity {
     grid-column: 1;
+    --hero-identity-size: clamp(2.6rem, 7vw, 5rem);
   }
 
   .hero__bio {
     grid-column: 1;
     justify-self: start;
     max-width: 46ch;
+    padding-left: 0;
   }
 
   .hero__footer {
@@ -200,29 +230,27 @@
   }
 
   .hero__masthead {
-    height: clamp(7rem, 19vh, 10rem);
+    height: clamp(5.5rem, 14vh, 8rem);
   }
 
   .hero__grid {
     align-content: center;
-    row-gap: var(--space-6);
+    row-gap: var(--space-5);
   }
 
-  /* Slightly larger than the desktop cap because mobile has far less
-     competing chrome — still comfortably inside a 390px gutter. */
-  .hero__headline-block {
-    font-size: clamp(2.9rem, 11.5vw, 4.2rem);
+  /* Mobile has far less competing chrome, so the lockup can breathe — but it
+     still has to clear a 390px gutter. 8vw keeps the name at ~270px. */
+  .hero__identity {
+    --hero-identity-size: clamp(1.9rem, 8vw, 3.4rem);
   }
 
-  .hero__headline-script {
-    font-size: clamp(2.6rem, 9.5vw, 4rem);
+  .hero__tagline-script {
     /* Undo the optical overhang so the swash cannot push past the gutter. */
     margin-left: 0;
   }
 
   .hero__bio {
     max-width: 100%;
-    padding-left: 0;
   }
 
   .hero__footer {
@@ -239,9 +267,22 @@
   }
 }
 
+/* Extra-narrow handsets (320px class devices) and any fallback font that
+   renders wider than Archivo. The clamp minimum already covers most of this;
+   this is the final safety step. */
+@media (max-width: 380px) {
+  .hero__identity {
+    --hero-identity-size: 7vw;
+  }
+}
+
 /* Short landscape windows: pull the chrome in so nothing collides. */
 @media (max-height: 620px) and (min-width: 701px) {
   .hero__masthead {
-    height: 4.5rem;
+    height: 4rem;
+  }
+
+  .hero__identity {
+    --hero-identity-size: clamp(1.7rem, 2.9vw, 3rem);
   }
 }

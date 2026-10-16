@@ -27,9 +27,22 @@ export const profile = {
   github: 'https://github.com/sep-tek',
   linkedin: 'https://linkedin.com/in/teklehaymanot-gashaw-677b87358',
 
-  // TODO: no CV is published yet. Add `resume` here and add an entry to
-  // `socialLinks` once there is a real file to point at.
-  resume: null,
+  /**
+   * Portrait used in the About section.
+   *
+   * Source is 478x521 (aspect 0.9175). At the ~180px it is displayed at that
+   * is comfortably sharp even on a 2x screen, so no derivative sizes or
+   * `srcset` are needed — the original file is the only one shipped.
+   */
+  portrait: {
+    src: '/images/teklehaymanot-profile.jpg',
+    alt: 'Portrait of Teklehaymanot',
+    width: 478,
+    height: 521,
+  },
+
+  /** Résumé PDF, served from `public/files`. Rendered as link-only actions. */
+  resume: '/files/teklehaymanot-gashaw-cv.pdf',
 
   /**
    * The clock in the hero footer is pinned to this zone rather than the
@@ -130,9 +143,19 @@ export const about = {
   ],
 }
 
+/**
+ * Featured projects.
+ *
+ * Both entries below were verified against the live repositories under the
+ * `sep-tek` GitHub account. Descriptions and technologies are taken from the
+ * repositories themselves and from supplied copy — nothing is inferred.
+ *
+ * TODO: there is no verified live/demo URL for either project, so no "Live
+ * demo" link is rendered. Add `links` entries once a deployment exists.
+ */
 export const work = {
   eyebrow: 'Work',
-  heading: ['Selected', 'project.'],
+  heading: ['Selected', 'projects.'],
   items: [
     {
       index: '01',
@@ -140,8 +163,23 @@ export const work = {
       category: 'Personal project',
       summary:
         'A healthcare web application with patient, doctor, and administrator workflows, appointment booking, and dashboards.',
-      href: 'https://github.com/sep-tek/smartclinic-pro',
-      cta: 'View repository',
+      // Verified from the repository's package.json and README stack table.
+      tech: ['React', 'React Router', 'Express', 'PostgreSQL', 'Three.js'],
+      links: [
+        { label: 'Source', href: 'https://github.com/sep-tek/smartclinic-pro' },
+      ],
+    },
+    {
+      index: '02',
+      title: 'Academic Profile Tracker',
+      category: 'Personal project',
+      summary:
+        'A menu-driven console application for registering student records, tracking programming, mathematics and discrete mathematics marks, and reporting class statistics.',
+      // Verified from the repository's README and PROJECT_1.cpp source.
+      tech: ['C++'],
+      links: [
+        { label: 'Source', href: 'https://github.com/sep-tek/academic-profile-tracker' },
+      ],
     },
   ],
   aside: {

@@ -2,6 +2,7 @@ import { contact, profile, socialLinks } from '../../data/content'
 import ArrowLink from '../ui/ArrowLink'
 import { CONTACT_ICONS } from '../ui/contactIcons'
 import Reveal from '../ui/Reveal'
+import RevealGroup from '../ui/RevealGroup'
 import { SectionShell } from './About'
 import './sections.css'
 
@@ -19,12 +20,14 @@ export default function Contact() {
       heading={contact.heading}
       className="section--contact"
     >
-      <div className="section__prose">
-        <Reveal as="p">{contact.body}</Reveal>
-        <Reveal as="p" className="contact__note">
+      <RevealGroup className="section__prose" stagger={0.16}>
+        <Reveal as="p" orchestrated>
+          {contact.body}
+        </Reveal>
+        <Reveal as="p" className="contact__note" orchestrated>
           {contact.note}
         </Reveal>
-      </div>
+      </RevealGroup>
 
       {GROUPS.map((group) => {
         const links = socialLinks.filter((link) => link.group === group.key)
@@ -36,16 +39,11 @@ export default function Contact() {
               <h3 className="contact-group__title">{group.label}</h3>
             </Reveal>
 
-            <ul className="contact-list">
-              {links.map((link, index) => {
+            <RevealGroup as="ul" className="contact-list" stagger={0.13}>
+              {links.map((link) => {
                 const Icon = CONTACT_ICONS[link.id]
                 return (
-                  <Reveal
-                    key={link.id}
-                    as="li"
-                    className="contact-list__item"
-                    delay={0.04 * index}
-                  >
+                  <Reveal key={link.id} as="li" className="contact-list__item" orchestrated>
                     <span className="contact-list__label">
                       <Icon size={13} strokeWidth={1.6} aria-hidden="true" />
                       <span>{link.label}</span>
@@ -56,12 +54,12 @@ export default function Contact() {
                   </Reveal>
                 )
               })}
-            </ul>
+            </RevealGroup>
           </div>
         )
       })}
 
-      <Reveal className="contact__signature" delay={0.12}>
+      <Reveal className="contact__signature" delay={0.14}>
         <span>{profile.role}</span>
         <span>{profile.name}</span>
       </Reveal>

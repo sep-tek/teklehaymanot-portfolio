@@ -28,8 +28,6 @@
 
 .section__heading {
   margin: 0 0 clamp(2.5rem, 6vh, 4.5rem);
-  display: flex;
-  flex-direction: column;
   font-family: var(--f-display);
   font-weight: 800;
   font-size: clamp(2.6rem, 8vw, 7rem);
@@ -37,6 +35,16 @@
   letter-spacing: -0.035em;
   text-transform: uppercase;
   color: var(--c-ink);
+}
+
+/* RevealGroup wrapper — must recreate the original column layout. */
+.section__heading-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.section__heading-line {
+  display: block;
 }
 
 .section__heading-line:first-child {
@@ -69,6 +77,58 @@
 
 .section__prose strong {
   color: var(--c-ink);
+}
+
+/* --- About: portrait + introduction ------------------------------------- */
+
+/* Wide screens put the portrait beside the introduction; narrow ones stack it
+   above. The portrait column is sized in rem so it lands in the 150-180px
+   band on a desktop without hard-coding pixels. */
+.about-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.about-intro__text {
+  min-width: 0;
+}
+
+.about-intro__figure {
+  margin: 0;
+  /* Wider than the previous 152-176px band, but still well short of
+     dominating the prose column beside it. */
+  width: clamp(10.5rem, 13vw, 13.5rem);
+  flex: none;
+}
+
+.about-intro__figure img {
+  display: block;
+  width: 100%;
+  /* The source is 478x521 (0.92) — taller than wide. Rendering it at that
+     native ratio showed the whole uncropped frame and read as narrow and
+     stretched. A square frame is wider than the source, so `cover` keeps the
+     full width and trims the height instead, which balances the crop. The
+     image is never scaled non-uniformly, so nothing is distorted. */
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  /* Bias upward: of the ~8% trimmed from the height, take it from the lower
+     body so the head and shoulders stay framed. */
+  object-position: 50% 28%;
+  border: 1px solid var(--c-line);
+  border-radius: 2px;
+  /* Lightly desaturated at rest so a colour portrait does not fight the
+     restrained palette; fully restored on hover/focus. Purely declarative,
+     no scripting. */
+  filter: grayscale(0.35) contrast(1.03);
+  transition: filter 320ms var(--ease-out), border-color 320ms var(--ease-out);
+}
+
+.about-intro__figure:hover img,
+.about-intro__figure:focus-within img {
+  filter: none;
+  border-color: var(--c-accent-line);
 }
 
 /* --- About: skills ------------------------------------------------------ */
@@ -127,12 +187,6 @@
   padding: 0.3em 0.7em;
   border: 1px solid var(--c-line);
   border-radius: 999px;
-  transition: border-color 240ms var(--ease-out), color 240ms var(--ease-out);
-}
-
-.skills__item:hover {
-  color: var(--c-ink);
-  border-color: var(--c-accent-line);
 }
 
 /* --- Work --------------------------------------------------------------- */
@@ -151,11 +205,6 @@
   align-items: start;
   padding: clamp(1.8rem, 4.5vh, 3rem) 0;
   border-bottom: 1px solid var(--c-line);
-  transition: background-color 420ms var(--ease-out);
-}
-
-.work-item:hover {
-  background-color: color-mix(in srgb, var(--c-ink) 3%, transparent);
 }
 
 .work-item__index {
@@ -201,6 +250,49 @@
   padding: 0.35em 0.75em;
   border: 1px solid var(--c-line);
   border-radius: 999px;
+  white-space: nowrap;
+  transition:
+    color 300ms var(--ease-out),
+    border-color 300ms var(--ease-out);
+}
+
+/* Technology chips. Quieter than the category pill so the row keeps a clear
+   reading order: name, description, category, stack, links. */
+.work-item__tech {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  max-width: 26rem;
+}
+
+.work-item__tech li {
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--c-ink-mute);
+  padding: 0.25em 0.6em;
+  border: 1px solid var(--c-line);
+  border-radius: 999px;
+  white-space: nowrap;
+  transition:
+    color 260ms var(--ease-out),
+    border-color 260ms var(--ease-out);
+}
+
+.work-item:hover .work-item__tech li,
+.work-item:focus-within .work-item__tech li {
+  color: var(--c-ink-soft);
+  border-color: var(--c-accent-line);
+}
+
+.work-item__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  align-items: baseline;
 }
 
 .work-aside {
@@ -281,6 +373,101 @@
   color: var(--c-ink);
 }
 
+/* Micro-interactions.
+   Every hover affordance is mirrored on :focus-visible so keyboard users get
+   the same signal as pointer users. Nothing here loops or animates on load —
+   the site only moves in response to a deliberate action. */
+
+.skills__item {
+  transition:
+    border-color 240ms var(--ease-out),
+    color 240ms var(--ease-out),
+    transform 240ms var(--ease-out);
+}
+
+.skills__item:hover,
+.skills__item:focus-visible {
+  color: var(--c-ink);
+  border-color: var(--c-accent-line);
+  transform: translateY(-2px);
+}
+
+.work-item {
+  transition:
+    background-color 320ms var(--ease-out),
+    padding-left 320ms var(--ease-out);
+}
+
+.work-item:hover,
+.work-item:focus-within {
+  background-color: color-mix(in srgb, var(--c-ink) 3%, transparent);
+  padding-left: clamp(0.5rem, 1.2vw, 1.25rem);
+}
+
+.work-item__title {
+  transition: color 320ms var(--ease-out);
+}
+
+.work-item:hover .work-item__title,
+.work-item:focus-within .work-item__title {
+  color: var(--c-accent);
+}
+
+.work-item__category {
+  transition:
+    color 300ms var(--ease-out),
+    border-color 300ms var(--ease-out);
+}
+
+.work-item:hover .work-item__category,
+.work-item:focus-within .work-item__category {
+  color: var(--c-ink);
+  border-color: var(--c-accent-line);
+}
+
+/* Contact rows gain a short accent rule that grows from the left. */
+.contact-list__item {
+  position: relative;
+  transition: background-color 300ms var(--ease-out);
+}
+
+.contact-list__item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--c-accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 300ms var(--ease-out);
+}
+
+.contact-list__item:hover::before,
+.contact-list__item:focus-within::before {
+  transform: scaleY(1);
+}
+
+.contact-list__label svg {
+  transition: opacity 260ms var(--ease-out), transform 260ms var(--ease-out);
+  opacity: 0.6;
+}
+
+.contact-list__item:hover .contact-list__label svg,
+.contact-list__item:focus-within .contact-list__label svg {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+.contact__signature {
+  transition: color 320ms var(--ease-out);
+}
+
+.contact__signature:hover {
+  color: var(--c-ink-soft);
+}
+
 /* --- Responsive ---------------------------------------------------------- */
 
 @media (max-width: 860px) {
@@ -294,6 +481,21 @@
   }
 }
 
+/* Portrait moves above the introduction and scales down with the viewport.
+   `order: -1` puts it first in the stacked layout without needing to reorder
+   the markup, so the document order still matches the visual order. */
+@media (max-width: 760px) {
+  .about-intro {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  .about-intro__figure {
+    order: -1;
+    width: clamp(8rem, 30vw, 10.5rem);
+  }
+}
+
 @media (max-width: 560px) {
   .work-item,
   .contact-list__item {
@@ -303,5 +505,9 @@
 
   .work-item__aside {
     grid-column: 1;
+  }
+
+  .cv-links {
+    gap: var(--space-3);
   }
 }
