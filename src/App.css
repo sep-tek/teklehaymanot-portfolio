@@ -1,0 +1,20 @@
+/* ==========================================================================
+   App shell
+   ========================================================================== */
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+/* Every section but the hero sits on an opaque black plane that covers the
+   fixed hero canvas as it scrolls away. */
+main > section:not(.hero),
+.site-footer {
+  background: var(--c-void);
+}

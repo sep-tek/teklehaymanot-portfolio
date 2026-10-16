@@ -1,0 +1,32 @@
+.social-links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  line-height: 1.95;
+}
+
+.social-links__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  color: var(--c-ink-soft);
+  text-decoration: none;
+  transition: color 220ms var(--ease-out), transform 260ms var(--ease-out);
+}
+
+.social-links__link:hover {
+  color: var(--c-ink);
+  transform: translateX(3px);
+}
+
+/* Icons stay dim so the text label remains dominant. */
+.social-links__icon {
+  color: currentColor;
+  opacity: 0.55;
+  flex: none;
+  transition: opacity 220ms var(--ease-out);
+}
+
+.social-links__link:hover .social-links__icon {
+  opacity: 1;
+}

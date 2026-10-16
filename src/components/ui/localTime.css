@@ -1,0 +1,24 @@
+.local-time {
+  margin: 0;
+  color: var(--c-ink-soft);
+  line-height: 1.72;
+}
+
+.local-time__label {
+  display: block;
+}
+
+.local-time__value {
+  display: block;
+  color: var(--c-ink);
+}
+
+.local-time__zone {
+  margin-right: 0.55em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.local-time__clock {
+  font-variant-numeric: tabular-nums;
+}

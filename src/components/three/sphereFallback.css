@@ -1,0 +1,70 @@
+/* CSS-only iridescent sphere — used when WebGL is unavailable.
+   Layered radial + conic gradients, no images, no filters on the main body. */
+
+.sphere-fallback {
+  position: absolute;
+  left: 50%;
+  top: 47%;
+  width: min(46vh, 42vw);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.sphere-fallback__body {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 34%),
+    conic-gradient(
+      from 210deg at 50% 50%,
+      rgba(99, 230, 255, 0.85),
+      rgba(157, 123, 255, 0.9) 22%,
+      rgba(255, 122, 224, 0.9) 44%,
+      rgba(143, 255, 212, 0.8) 62%,
+      rgba(99, 230, 255, 0.85) 82%,
+      rgba(99, 230, 255, 0.85)
+    );
+  filter: blur(2px) saturate(1.05);
+  animation: sphere-drift 26s linear infinite;
+}
+
+/* Soft white bloom that keeps the pearl base bright. */
+.sphere-fallback__rim {
+  position: absolute;
+  inset: 6%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.12) 52%,
+    rgba(255, 255, 255, 0) 74%
+  );
+  mix-blend-mode: screen;
+}
+
+/* Terminator shading — keeps it spherical rather than flat. */
+.sphere-fallback__shade {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(0, 0, 0, 0) 42%, rgba(0, 0, 0, 0.55) 88%),
+    radial-gradient(circle at 70% 82%, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 52%);
+}
+
+@keyframes sphere-drift {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sphere-fallback__body {
+    animation: none;
+  }
+}

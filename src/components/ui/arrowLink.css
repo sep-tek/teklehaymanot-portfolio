@@ -1,0 +1,23 @@
+.arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  color: var(--c-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--c-line);
+  padding-bottom: 0.28em;
+  transition: border-color 260ms var(--ease-out), color 260ms var(--ease-out);
+}
+
+.arrow-link:hover {
+  color: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+.arrow-link__icon {
+  transition: transform 300ms var(--ease-out);
+}
+
+.arrow-link:hover .arrow-link__icon {
+  transform: translate(3px, -3px);
+}

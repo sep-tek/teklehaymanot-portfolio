@@ -1,0 +1,229 @@
+/* Header.
+   Deliberately NOT fixed: it is absolutely positioned at the top of the
+   document so it scrolls away with the hero. A persistent bar would sit over
+   the sections forever and break the cinematic feel. It sits above the canvas
+   (z-index 50) while the hero is on screen and leaves with it. */
+
+.site-header {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: 0.75fr 1.55fr 1.15fr auto auto;
+  align-items: start;
+  gap: var(--space-5);
+  padding: var(--space-5) var(--gutter);
+  pointer-events: none;
+  font-family: var(--f-mono);
+  font-size: var(--fs-ui);
+  line-height: 1.72;
+  letter-spacing: 0.02em;
+}
+
+/* The header is a non-interactive overlay: the canvas sits under it and must
+   stay clickable/draggable. Everything that is genuinely interactive opts back
+   in — including the theme switcher's listbox options, which are <li>, not
+   links or buttons, and would otherwise inherit pointer-events: none and
+   silently swallow clicks. */
+.site-header a,
+.site-header button,
+.theme-switcher,
+.theme-switcher__list,
+.theme-switcher__option {
+  pointer-events: auto;
+}
+
+/* --- Wordmark ------------------------------------------------------------
+   Slightly larger than the surrounding chrome so the name reads as the
+   primary identifier. Tight tracking and a tightened line-height make two
+   short fragments read as one deliberate mark rather than two loose words. */
+
+.site-header__wordmark {
+  display: block;
+  justify-self: start;
+  font-family: var(--f-display);
+  font-size: clamp(0.95rem, 1.15vw, 1.3rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.22;
+  color: var(--c-ink);
+  text-decoration: none;
+  transition: color 220ms var(--ease-out);
+}
+
+.site-header__wordmark-line {
+  display: block;
+}
+
+.site-header__wordmark:hover {
+  color: var(--c-accent);
+}
+
+/* --- Availability ------------------------------------------------------- */
+
+.site-header__availability {
+  margin: 0;
+  color: var(--c-ink-soft);
+}
+
+.site-header__availability-label {
+  display: block;
+}
+
+.site-header__email {
+  color: var(--c-ink);
+  text-underline-offset: 0.28em;
+  text-decoration-thickness: 1px;
+  transition: color 220ms var(--ease-out);
+}
+
+.site-header__email:hover {
+  color: var(--c-accent);
+}
+
+/* --- Summary ------------------------------------------------------------ */
+
+.site-header__summary {
+  color: var(--c-ink-soft);
+}
+
+.site-header__summary-line {
+  margin: 0;
+}
+
+.site-header__summary-line--strong {
+  color: var(--c-ink);
+  font-weight: 700;
+}
+
+/* --- Nav ---------------------------------------------------------------- */
+
+.site-nav {
+  justify-self: end;
+}
+
+.site-nav__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: right;
+  display: flex;
+  gap: var(--space-5);
+}
+
+.site-nav__link {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.25em;
+  color: var(--c-ink-mute);
+  text-decoration: none;
+  transition: color 240ms var(--ease-out);
+}
+
+.site-nav__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 340ms var(--ease-out);
+}
+
+.site-nav__link:hover {
+  color: var(--c-ink);
+}
+
+.site-nav__link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Active state: full-weight colour plus a persistent rule. */
+.site-nav__link.is-active {
+  color: var(--c-ink);
+}
+
+.site-nav__link.is-active::after {
+  transform: scaleX(1);
+  background: var(--c-accent);
+}
+
+/* --- Skip link ----------------------------------------------------------- */
+
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: 0;
+  transform: translateY(-160%);
+  padding: 0.5em 0.9em;
+  background: var(--c-ink);
+  color: var(--c-ink-invert);
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 180ms var(--ease-out);
+  z-index: 60;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0.35rem);
+}
+
+/* --- Responsive ----------------------------------------------------------
+   Tablet: drop the summary block, keep wordmark / availability / nav+control.
+   Nav and control share a right-hand row so they never collide. */
+
+@media (max-width: 1180px) {
+  .site-header {
+    grid-template-columns: auto 1fr auto auto;
+    grid-template-areas:
+      'wordmark summary nav control'
+      'wordmark contact  nav control';
+    column-gap: var(--space-5);
+    row-gap: var(--space-3);
+  }
+
+  .site-header__wordmark { grid-area: wordmark; }
+  .site-header__summary { grid-area: summary; }
+  .site-header__availability { grid-area: contact; }
+  .site-nav { grid-area: nav; align-self: center; }
+  .theme-switcher { grid-area: control; align-self: center; }
+}
+
+@media (max-width: 860px) {
+  .site-header {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'wordmark control'
+      'contact  nav';
+    row-gap: var(--space-4);
+  }
+
+  .site-header__summary {
+    display: none;
+  }
+
+  .site-nav__list {
+    justify-content: flex-end;
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 560px) {
+  .site-header {
+    padding-top: var(--space-4);
+  }
+
+  .site-header__availability {
+    max-width: 26ch;
+    overflow-wrap: anywhere;
+  }
+
+  .theme-switcher__label {
+    display: none;
+  }
+}

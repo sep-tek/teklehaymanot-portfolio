@@ -1,0 +1,247 @@
+/* ==========================================================================
+   Hero — full-viewport cinematic stage.
+   The overlay is a three-row grid: masthead (clears the fixed header),
+   the editorial middle band, and the pinned footer chrome.
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  background: var(--c-void);
+  isolation: isolate;
+}
+
+/* The WebGL canvas sits behind everything and never intercepts input. */
+.hero__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero__canvas canvas {
+  display: block;
+}
+
+/* Fade-in veil over the canvas while the scene warms up. */
+.hero__scene {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero__overlay {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100svh;
+  padding: 0 var(--gutter) var(--space-5);
+  pointer-events: none;
+}
+
+.hero__overlay a {
+  pointer-events: auto;
+}
+
+.hero__masthead {
+  height: clamp(5.5rem, 13vh, 9rem);
+}
+
+/* --- Editorial middle band --------------------------------------------- */
+
+/* Asymmetric on purpose. Column 1 holds the headline and is deliberately
+   narrower than the sphere's footprint, column 2 is empty (the canvas shows
+   through), column 3 carries a comfortably wide biography.
+
+   Headline sizing note: "DEVELOPER." is ten glyphs, so at a bold grotesque
+   its rendered width is roughly 6.5em. Capping it near 4.6vw keeps the line
+   ending around the 25% mark, clear of the sphere, which spans ~36–64%. */
+.hero__grid {
+  display: grid;
+  grid-template-columns: 24fr 42fr 34fr;
+  align-items: center;
+  column-gap: var(--space-5);
+}
+
+.hero__headline {
+  grid-column: 1;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-weight: 400;
+  line-height: 0.88;
+  color: var(--c-ink);
+}
+
+/* High-contrast didone italic. Reduced less than the block below so the
+   editorial contrast between the two lines survives. */
+.hero__headline-script {
+  font-family: var(--f-script);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(2.4rem, 5.2vw, 5.4rem);
+  letter-spacing: -0.012em;
+  /* Optical overhang so the swash C clears the gutter. */
+  margin-left: -0.05em;
+  margin-bottom: 0.08em;
+  white-space: nowrap;
+}
+
+/* Heavy grotesque, tight tracking. Reduced hardest — this is the line that
+   was crossing the sphere. */
+.hero__headline-block {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(2.5rem, 4.6vw, 5rem);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.hero__bio {
+  grid-column: 3;
+  max-width: 48ch;
+  font-family: var(--f-mono);
+  font-size: clamp(0.8rem, 0.62vw + 0.58rem, 1rem);
+  line-height: 1.72;
+  color: var(--c-ink-soft);
+  /* Nudged off the exact centre line so it does not crowd the sphere. */
+  padding-left: clamp(0rem, 1vw, 1rem);
+}
+
+.hero__bio p {
+  margin: 0 0 1.05em;
+}
+
+.hero__bio p:last-child {
+  margin-bottom: 0;
+}
+
+.hero__bio strong {
+  color: var(--c-ink);
+  font-weight: 700;
+}
+
+/* Short stack line closing the bio. */
+.hero__bio-focus {
+  color: var(--c-ink);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.88em;
+}
+
+/* --- Pinned footer chrome ------------------------------------------------ */
+
+.hero__footer {
+  display: grid;
+  grid-template-columns: 1fr 1.9fr 1fr 0.95fr;
+  align-items: end;
+  gap: var(--space-4);
+  font-family: var(--f-mono);
+  font-size: var(--fs-ui);
+  letter-spacing: 0.02em;
+}
+
+.hero__footer > *:nth-child(1) { grid-column: 1; }
+.hero__footer > *:nth-child(2) { grid-column: 2; }
+.hero__colophon {
+  grid-column: 4;
+  margin: 0;
+  text-align: right;
+  line-height: 1.72;
+  color: var(--c-ink);
+}
+
+.hero__colophon > span {
+  display: block;
+}
+
+.hero__colophon-mark {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* --- Responsive ----------------------------------------------------------
+   Tablet stacks headline and bio full width rather than squeezing the bio
+   into half a row — at 768px a split leaves it an unreadable narrow column. */
+
+@media (max-width: 1080px) {
+  .hero__grid {
+    grid-template-columns: 1fr;
+    row-gap: var(--space-7);
+  }
+
+  .hero__headline {
+    grid-column: 1;
+  }
+
+  .hero__bio {
+    grid-column: 1;
+    justify-self: start;
+    max-width: 46ch;
+  }
+
+  .hero__footer {
+    grid-template-columns: 1fr 1fr;
+    row-gap: var(--space-5);
+  }
+
+  .hero__footer > *:nth-child(1) { grid-column: 1; }
+  .hero__footer > *:nth-child(2) { grid-column: 1; }
+  .hero__colophon { grid-column: 2; }
+}
+
+@media (max-width: 700px) {
+  .hero__overlay {
+    padding-bottom: var(--space-4);
+  }
+
+  .hero__masthead {
+    height: clamp(7rem, 19vh, 10rem);
+  }
+
+  .hero__grid {
+    align-content: center;
+    row-gap: var(--space-6);
+  }
+
+  /* Slightly larger than the desktop cap because mobile has far less
+     competing chrome — still comfortably inside a 390px gutter. */
+  .hero__headline-block {
+    font-size: clamp(2.9rem, 11.5vw, 4.2rem);
+  }
+
+  .hero__headline-script {
+    font-size: clamp(2.6rem, 9.5vw, 4rem);
+    /* Undo the optical overhang so the swash cannot push past the gutter. */
+    margin-left: 0;
+  }
+
+  .hero__bio {
+    max-width: 100%;
+    padding-left: 0;
+  }
+
+  .hero__footer {
+    grid-template-columns: 1fr auto;
+    gap: var(--space-4) var(--space-5);
+  }
+
+  .hero__footer > *:nth-child(1) { grid-column: 1; }
+  .hero__footer > *:nth-child(2) { grid-column: 1; }
+  .hero__colophon {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+  }
+}
+
+/* Short landscape windows: pull the chrome in so nothing collides. */
+@media (max-height: 620px) and (min-width: 701px) {
+  .hero__masthead {
+    height: 4.5rem;
+  }
+}

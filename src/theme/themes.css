@@ -1,0 +1,71 @@
+/* ============================================================================
+   Theme tokens.
+   Only colour variables live here — layout, type and motion are shared by
+   every theme. Applied via <html data-theme="...">.
+   ========================================================================== */
+
+:root {
+  /* Midnight is the base so there is never a flash of undefined values. */
+  --c-void: #000000;
+  --c-ink: #f1f3f7;
+  --c-ink-soft: #b4bac4;
+  --c-ink-mute: #838a95;
+  --c-line: rgba(255, 255, 255, 0.12);
+  --c-accent: #7ee8ff;
+}
+
+[data-theme='pearl'] {
+  --c-void: #f1ede5;
+  --c-ink: #16150f;
+  --c-ink-soft: #4c4941;
+  --c-ink-mute: #726e64;
+  --c-line: rgba(22, 21, 15, 0.16);
+  --c-accent: #8a5a2b;
+}
+
+[data-theme='ocean'] {
+  --c-void: #050b16;
+  --c-ink: #e6f1f8;
+  --c-ink-soft: #a2b8c9;
+  --c-ink-mute: #6d8397;
+  --c-line: rgba(150, 200, 230, 0.18);
+  --c-accent: #63c8e8;
+}
+
+[data-theme='forest'] {
+  --c-void: #090d0b;
+  --c-ink: #e8eee9;
+  --c-ink-soft: #a5b2a8;
+  --c-ink-mute: #76837b;
+  --c-line: rgba(180, 220, 190, 0.16);
+  --c-accent: #9fc7a8;
+}
+
+[data-theme='violet'] {
+  --c-void: #0b0910;
+  --c-ink: #eee9f5;
+  --c-ink-soft: #b2a9c2;
+  --c-ink-mute: #7f7692;
+  --c-line: rgba(190, 170, 230, 0.17);
+  --c-accent: #b79ce6;
+}
+
+/* Accent tints used for hovers and focus rings — derived so they stay
+   legible on both light and dark surfaces. */
+:root {
+  --c-accent-soft: color-mix(in srgb, var(--c-accent) 22%, transparent);
+  --c-accent-line: color-mix(in srgb, var(--c-accent) 48%, transparent);
+  --c-ink-invert: var(--c-void);
+}
+
+/* Selection has to follow the theme or it becomes unreadable on Pearl. */
+::selection {
+  background: var(--c-accent-soft);
+  color: var(--c-ink);
+}
+
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
