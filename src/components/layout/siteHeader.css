@@ -9,7 +9,9 @@
   inset: 0 0 auto;
   z-index: 50;
   display: grid;
-  grid-template-columns: 0.75fr 1.55fr 1.15fr auto auto;
+  /* No wordmark column — the name lives once, in the hero. */
+  grid-template-columns: 1.55fr 1.15fr auto auto;
+  grid-template-areas: 'contact summary nav control';
   align-items: start;
   gap: var(--space-5);
   padding: var(--space-5) var(--gutter);
@@ -33,37 +35,10 @@
   pointer-events: auto;
 }
 
-/* --- Wordmark ------------------------------------------------------------
-   Slightly larger than the surrounding chrome so the name reads as the
-   primary identifier. Tight tracking and a tightened line-height make two
-   short fragments read as one deliberate mark rather than two loose words. */
-
-.site-header__wordmark {
-  display: block;
-  justify-self: start;
-  font-family: var(--f-display);
-  font-size: clamp(0.95rem, 1.15vw, 1.3rem);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
-  line-height: 1.22;
-  color: var(--c-ink);
-  text-decoration: none;
-  transition: color 220ms var(--ease-out);
-}
-
-.site-header__wordmark-line {
-  display: block;
-}
-
-.site-header__wordmark:hover,
-.site-header__wordmark:focus-visible {
-  color: var(--c-accent);
-}
-
 /* --- Availability ------------------------------------------------------- */
 
 .site-header__availability {
+  grid-area: contact;
   margin: 0;
   color: var(--c-ink-soft);
 }
@@ -87,6 +62,7 @@
 /* --- Summary ------------------------------------------------------------ */
 
 .site-header__summary {
+  grid-area: summary;
   color: var(--c-ink-soft);
 }
 
@@ -102,6 +78,7 @@
 /* --- Nav ---------------------------------------------------------------- */
 
 .site-nav {
+  grid-area: nav;
   justify-self: end;
 }
 
@@ -178,33 +155,38 @@
 }
 
 /* --- Responsive ----------------------------------------------------------
-   Tablet: drop the summary block, keep wordmark / availability / nav+control.
-   Nav and control share a right-hand row so they never collide. */
+   The grid collapses from four zones to two columns. Areas (not column
+   positions) drive the placement, so removing the wordmark column did not
+   require renumbering anything.
+
+   Tablet keeps the stack summary; phones drop it, which is what keeps the
+   header short enough on a 320px screen. */
 
 @media (max-width: 1180px) {
   .site-header {
-    grid-template-columns: auto 1fr auto auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
-      'wordmark summary nav control'
-      'wordmark contact  nav control';
-    column-gap: var(--space-5);
-    row-gap: var(--space-3);
+      'contact  control'
+      'summary  summary'
+      'nav      nav';
+    row-gap: var(--space-4);
   }
 
-  .site-header__wordmark { grid-area: wordmark; }
-  .site-header__summary { grid-area: summary; }
-  .site-header__availability { grid-area: contact; }
-  .site-nav { grid-area: nav; align-self: center; }
-  .theme-switcher { grid-area: control; align-self: center; }
+  .site-nav {
+    align-self: center;
+  }
+
+  .theme-switcher {
+    grid-area: control;
+    align-self: center;
+  }
 }
 
 @media (max-width: 860px) {
   .site-header {
-    grid-template-columns: 1fr auto;
     grid-template-areas:
-      'wordmark control'
-      'contact  nav';
-    row-gap: var(--space-4);
+      'contact control'
+      'nav     nav';
   }
 
   .site-header__summary {
@@ -212,18 +194,23 @@
   }
 
   .site-nav__list {
-    justify-content: flex-end;
-    gap: var(--space-4);
+    justify-content: flex-start;
+    gap: var(--space-5);
   }
 }
 
 @media (max-width: 560px) {
   .site-header {
     padding-top: var(--space-4);
+    row-gap: var(--space-3);
   }
 
   .site-header__availability {
-    max-width: 26ch;
+    /* Lets the address break rather than force the header wider than the
+       viewport — an over-wide child is what pushed the page into horizontal
+       overflow on small screens. */
+    min-width: 0;
+    max-width: 30ch;
     overflow-wrap: anywhere;
   }
 

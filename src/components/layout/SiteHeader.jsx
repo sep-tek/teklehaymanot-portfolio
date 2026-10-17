@@ -6,12 +6,14 @@ import './siteHeader.css'
 const SECTION_IDS = ['main', ...navLinks.map((link) => link.id)]
 
 /**
- * Fixed overlay header.
+ * Header overlay.
  *
- * Five zones on one grid: wordmark, availability + email, summary, nav,
+ * Four zones on one grid: availability + email, stack summary, nav, and the
  * theme control. The nav reflects the section currently in view via
- * IntersectionObserver rather than on click, so it stays honest when the
- * user scrolls or uses the back button.
+ * IntersectionObserver rather than on click, so it stays honest when the user
+ * scrolls or uses the back button.
+ *
+ * There is deliberately no wordmark here — the name lives once, in the hero.
  */
 export default function SiteHeader() {
   const active = useActiveSection(SECTION_IDS)
@@ -20,14 +22,6 @@ export default function SiteHeader() {
     <header className="site-header">
       <a className="skip-link" href="#main">
         Skip to content
-      </a>
-
-      <a className="site-header__wordmark" href="#main" aria-label={`${profile.name} — back to top`}>
-        {profile.nameLines.map((line) => (
-          <span key={line} className="site-header__wordmark-line">
-            {line}
-          </span>
-        ))}
       </a>
 
       <p className="site-header__availability">

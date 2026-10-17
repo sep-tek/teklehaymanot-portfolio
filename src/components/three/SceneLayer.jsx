@@ -69,7 +69,10 @@ export default function SceneLayer() {
     <div className="hero__canvas" aria-hidden="true">
       <Canvas
         dpr={dpr}
-        shadows
+        /* `percentage` maps to PCFShadowMap. Bare `shadows` requests
+           PCFSoftShadowMap, which three 0.186 removed, so the renderer was
+           downgrading it internally and logging a warning every load. */
+        shadows="percentage"
         gl={{
           antialias: true,
           alpha: true,
@@ -77,11 +80,13 @@ export default function SceneLayer() {
           stencil: false,
         }}
         camera={{ position: [0, 1.05, 9.4], fov: 36, near: 0.1, far: 120 }}
-        onCreated={({ gl, camera }) => {
+        onCreated={({ gl }) => {
           gl.toneMapping = ACESFilmicToneMapping
           // Seeded here, then kept in sync below whenever the theme changes.
           gl.toneMappingExposure = theme.scene.exposure
-          camera.lookAt(0, -0.18, 0)
+          // Camera framing is owned exclusively by <CameraRig>, which adapts
+          // distance, aim and fog to the viewport aspect. Setting the aim here
+          // as well meant this ran after the rig and silently overrode it.
         }}
       >
         <Suspense fallback={null}>

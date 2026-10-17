@@ -58,14 +58,30 @@
   transform: rotate(180deg);
 }
 
-/* Popover — flat, hairline border, no shadow bloom. */
+/* Popover — flat, hairline border, no shadow bloom.
+
+   Anchored by its RIGHT edge to the trigger's right edge. That keeps it inside
+   the viewport at every width because the trigger itself is pinned to the
+   right gutter.
+
+   An earlier narrow-screen override set `right: auto; left: 0`, which pushed
+   the panel's left edge onto the trigger's left edge and drove it ~115px past
+   the right of a 320px screen — which in turn forced horizontal page overflow
+   and made mobile browsers shrink the whole page to compensate. */
 
 .theme-switcher__list {
   position: absolute;
   top: calc(100% + 0.7rem);
   right: 0;
   z-index: 70;
-  min-width: 11.5rem;
+  /* Never wider than the space actually available, whatever the viewport. */
+  min-inline-size: 0;
+  inline-size: max-content;
+  max-inline-size: min(12rem, 100dvw - 2 * var(--gutter));
+  /* Scrolls internally rather than ever being clipped by the viewport. */
+  max-block-size: min(60dvh, 22rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   margin: 0;
   padding: 0.3rem;
   list-style: none;
@@ -115,12 +131,4 @@
 
 .theme-switcher__option-label {
   flex: 1;
-}
-
-/* On narrow screens the popover should not overflow the viewport. */
-@media (max-width: 620px) {
-  .theme-switcher__list {
-    right: auto;
-    left: 0;
-  }
 }

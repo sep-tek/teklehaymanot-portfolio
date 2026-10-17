@@ -14,9 +14,11 @@
 import { useEffect } from 'react'
 import { PerformanceMonitor } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
+import CameraRig from './CameraRig'
 import StudioEnvironment from './StudioEnvironment'
 import IridescentSphere from './IridescentSphere'
 import RockyGround from './RockyGround'
+import { useHeroFraming } from './useHeroFraming'
 
 /**
  * Tone-mapping exposure is seeded once in `onCreated`, but themes differ
@@ -42,6 +44,7 @@ function ExposureSync({ exposure }) {
 export default function SceneContent({ settings, theme, interactive, pointerGain = 1, onDecline }) {
   const scene = theme.scene
   const sphereSegments = settings.sphereSegments
+  const { dim } = useHeroFraming()
 
   return (
     <>
@@ -49,6 +52,10 @@ export default function SceneContent({ settings, theme, interactive, pointerGain
       <fog attach="fog" args={[scene.background, scene.fogNear, scene.fogFar]} />
 
       <ExposureSync exposure={scene.exposure} />
+
+      {/* Runs before the scene settles its first frame so the sphere is never
+          briefly drawn at the wrong scale on a narrow viewport. */}
+      <CameraRig />
 
       <ambientLight intensity={scene.ambient.intensity} color={scene.ambient.color} />
 
@@ -104,6 +111,7 @@ export default function SceneContent({ settings, theme, interactive, pointerGain
         textureSize={settings.textureSize}
         interactive={interactive}
         gain={pointerGain}
+        dim={dim}
         look={scene.sphere}
       />
 

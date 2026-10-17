@@ -6,7 +6,11 @@
 
 .hero {
   position: relative;
+  min-height: 100vh;
+  /* `svh` first, `dvh` where supported: dvh tracks the real viewport as mobile
+     browser chrome collapses, so the hero never ends up taller than the screen. */
   min-height: 100svh;
+  min-height: 100dvh;
   background: var(--c-void);
   isolation: isolate;
 }
@@ -36,8 +40,11 @@
   z-index: 2;
   display: grid;
   grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
   padding: 0 var(--gutter) var(--space-5);
+  padding-bottom: max(var(--space-5), env(safe-area-inset-bottom));
   pointer-events: none;
 }
 
@@ -45,8 +52,14 @@
   pointer-events: auto;
 }
 
+/* Spacer that clears the header.
+   `--site-header-h` is written by `useHeaderHeight` from a ResizeObserver, so
+   this always matches the header's real, content-driven height. The previous
+   hard-coded `clamp(...)` values were wrong at narrow widths, where the
+   availability block wraps to several lines and the header grew past the
+   spacer — which is what let the header overlap the hero name. */
 .hero__masthead {
-  height: clamp(4.5rem, 10vh, 7rem);
+  block-size: var(--site-header-h, 6rem);
 }
 
 /* --- Identity lockup ----------------------------------------------------
@@ -162,8 +175,11 @@
 
 /* --- Footer chrome ------------------------------------------------------- */
 
+/* No explicit `grid-row` here: the overlay declares three rows (masthead,
+   identity/bio band, footer) and auto-placement is correct. An earlier
+   `grid-row: 4` forced an implicit empty row between the band and the
+   footer. */
 .hero__footer {
-  grid-row: 4;
   display: grid;
   grid-template-columns: 1fr 1.9fr 1fr 0.95fr;
   align-items: end;
@@ -226,11 +242,7 @@
 
 @media (max-width: 700px) {
   .hero__overlay {
-    padding-bottom: var(--space-4);
-  }
-
-  .hero__masthead {
-    height: clamp(5.5rem, 14vh, 8rem);
+    padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
   }
 
   .hero__grid {
@@ -238,10 +250,11 @@
     row-gap: var(--space-5);
   }
 
-  /* Mobile has far less competing chrome, so the lockup can breathe — but it
-     still has to clear a 390px gutter. 8vw keeps the name at ~270px. */
+  /* A deliberately compact composition rather than the desktop layout scaled
+     down: the identity block keeps a readable size and the bio tightens, so
+     the whole hero still fits one screen on a short handset. */
   .hero__identity {
-    --hero-identity-size: clamp(1.9rem, 8vw, 3.4rem);
+    --hero-identity-size: clamp(1.75rem, 7.6vw, 3.2rem);
   }
 
   .hero__tagline-script {
@@ -251,6 +264,12 @@
 
   .hero__bio {
     max-width: 100%;
+    font-size: 0.8125rem;
+    line-height: 1.62;
+  }
+
+  .hero__bio p {
+    margin-bottom: 0.8em;
   }
 
   .hero__footer {
@@ -272,16 +291,17 @@
    this is the final safety step. */
 @media (max-width: 380px) {
   .hero__identity {
-    --hero-identity-size: 7vw;
+    --hero-identity-size: 6.8vw;
+  }
+
+  .hero__bio {
+    font-size: 0.78125rem;
+    line-height: 1.58;
   }
 }
 
 /* Short landscape windows: pull the chrome in so nothing collides. */
 @media (max-height: 620px) and (min-width: 701px) {
-  .hero__masthead {
-    height: 4rem;
-  }
-
   .hero__identity {
     --hero-identity-size: clamp(1.7rem, 2.9vw, 3rem);
   }

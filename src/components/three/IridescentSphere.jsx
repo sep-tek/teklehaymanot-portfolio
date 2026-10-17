@@ -77,11 +77,28 @@ export default function IridescentSphere({
   textureSize = 512,
   interactive = true,
   gain = 1,
+  dim = 0,
   look = DEFAULT_LOOK,
 }) {
   const group = useRef(null)
   const spin = useRef(null)
   const appearance = { ...DEFAULT_LOOK, ...look }
+
+  /**
+   * Short viewports have no free space, so the sphere steps back into the page
+   * instead of competing with the copy: the base colour is mixed toward black
+   * and the environment response is reduced. Desktop passes `dim: 0` and is
+   * completely unaffected.
+   */
+  const surface = useMemo(
+    () => ({
+      color: dim > 0
+        ? `color-mix(in srgb, ${appearance.color} ${Math.round((1 - dim) * 100)}%, #000)`
+        : appearance.color,
+      envMapIntensity: appearance.envMapIntensity * (1 - dim * 0.5),
+    }),
+    [appearance.color, appearance.envMapIntensity, dim],
+  )
 
   const maps = useMemo(() => createSphereMaterialMaps(textureSize), [textureSize])
 
@@ -124,7 +141,7 @@ export default function IridescentSphere({
         <mesh castShadow>
           <sphereGeometry args={[radius, segments[0], segments[1]]} />
           <meshPhysicalMaterial
-            color={appearance.color}
+            color={surface.color}
             roughness={appearance.roughness}
             roughnessMap={maps.roughnessMap}
             metalness={0}
@@ -139,7 +156,7 @@ export default function IridescentSphere({
             sheen={0.4}
             sheenColor="#cdeeff"
             sheenRoughness={0.55}
-            envMapIntensity={appearance.envMapIntensity}
+            envMapIntensity={surface.envMapIntensity}
           />
         </mesh>
       </group>
